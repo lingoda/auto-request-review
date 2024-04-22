@@ -22,12 +22,45 @@ function fetch_other_group_members({ author, config }) {
   core.info('Group assignment feature is enabled');
 
   const groups = (config.reviewers && config.reviewers.groups) || {};
-  const belonging_group_names = Object.entries(groups).map(([ group_name, members ]) =>
-    members.includes(author) ? group_name : undefined
+
+  const belonging_group_names = Object.entries(groups).map(function([ group_name, members ]) {
+        const actualMembers = {};
+        members.forEach((member) => {
+          if (member.contains('team:')) {
+            const team = member.replace('team:', '');
+            const teamData = github.get_octokit.rest.teams.listMembersInOrg({
+              org,
+              team_slug: team,
+            });
+
+            const teamObj = teamData.data.map(user => {
+              return {
+                username: user.login,
+                url: user.html_url,
+                avatar: user.avatar_url
+              }
+            });
+
+            if (teamData.length > 0) {
+              info(`Obtained data from ${teamData.length} users`);
+              setOutput("usernames", teamData.map(({ username }) => username).join(","));
+              teamData.map(function({ username }) {
+                actualMembers.push(username)
+              })
+              setOutput("team-data", JSON.stringify(teamData));
+            } else {
+              setFailed(`No users were found when searching for the team ${team}`);
+            }
+          }else{
+            actualMembers.push(member);
+          }
+        });
+        actualMembers.includes(author) ? group_name : undefined
+      }
   ).filter((group_name) => group_name);
 
   const other_group_members = belonging_group_names.flatMap((group_name) =>
-    groups[group_name]
+      groups[group_name]
   ).filter((group_member) => group_member !== author);
 
   return [ ...new Set(other_group_members) ];
