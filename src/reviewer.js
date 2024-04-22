@@ -41,26 +41,28 @@ function fetch_other_group_members({ author, config }) {
               }
             });
 
-            if (teamData.length > 0) {
-              info(`Obtained data from ${teamData.length} users`);
-              setOutput("usernames", teamData.map(({ username }) => username).join(","));
-              teamData.map(function({ username }) {
+            if (teamObj.length > 0) {
+              core.info(`Obtained data from ${teamObj.length} users`);
+              core.info("usernames", teamObj.map(({ username }) => username).join(","));
+              teamObj.map(function({ username }) {
                 actualMembers.push(username)
               })
-              setOutput("team-data", JSON.stringify(teamData));
+              core.info("team-data", JSON.stringify(teamObj));
             } else {
-              setFailed(`No users were found when searching for the team ${team}`);
+              core.info(`No users were found when searching for the team ${team}`);
             }
           }else{
             actualMembers.push(member);
           }
         });
 
-        info(`Obtained data from ${actualMembers.length} users`);
-        setOutput("usernames", actualMembers.map(({ username }) => username).join(","));
-        setOutput("team-data", JSON.stringify(actualMembers));
+        core.info(`Obtained data from ${actualMembers.length} users`);
+        core.info("usernames", actualMembers.map(({ username }) => username).join(","));
+        core.info("team-data", JSON.stringify(actualMembers));
 
         actualMembers.includes(author) ? group_name : undefined
+        members = actualMembers;
+        core.info('------------' + JSON.stringify(actualMembers));
       }
   ).filter((group_name) => group_name);
 
