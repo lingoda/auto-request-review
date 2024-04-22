@@ -16201,9 +16201,10 @@ function fetch_other_group_members({ author, config }) {
         const octokit = github.getOctokit(token);
         core.info(JSON.stringify(octokit.teams, '', 4));
         const teamData = octokit.teams.listMembersInOrg({
-          org: github.get_context().repo.owner,
+          org: github.context.repo.owner,
           team_slug: team,
         });
+        core.info(JSON.stringify(teamData, '', 4));
 
         const teamObj = teamData.data.map((user) => {
           return {
