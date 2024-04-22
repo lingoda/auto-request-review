@@ -31,6 +31,7 @@ function fetch_other_group_members({ author, config }) {
         const team = member.replace('team:', '');
         const token = core.getInput('token');
         const octokit = github.getOctokit(token);
+        core.info(JSON.stringify(octokit.rest, '', 4));
         const teamData = octokit.rest.teams.listMembersInOrg({
           org: github.get_context().repo.owner,
           team_slug: team,
