@@ -16189,57 +16189,60 @@ function fetch_other_group_members({ author, config }) {
   }
 
   core.info('Group assignment feature is enabled');
-  core.info('Group assignment feature is enabled 00');
 
   const groups = (config.reviewers && config.reviewers.groups) || {};
 
   const belonging_group_names = Object.entries(groups).map(function([ group_name, members ]) {
-        const actualMembers = {};
-        members.forEach((member) => {
-          if (member.startsWith('team:')) {
-            const team = member.replace('team:', '');
-            const teamData = github.get_octokit.rest.teams.listMembersInOrg({
-              org,
-              team_slug: team,
-            });
-
-            const teamObj = teamData.data.map(user => {
-              return {
-                username: user.login,
-                url: user.html_url,
-                avatar: user.avatar_url
-              }
-            });
-
-            if (teamObj.length > 0) {
-              core.info(`Obtained data from ${teamObj.length} users`);
-              core.info("usernames", teamObj.map(({ username }) => username).join(","));
-              teamObj.map(function({ username }) {
-                actualMembers.push(username)
-              })
-              core.info("team-data", JSON.stringify(teamObj));
-            } else {
-              core.info(`No users were found when searching for the team ${team}`);
-            }
-          }else{
-            actualMembers.push(member);
-          }
+    const actualMembers = {};
+    members.forEach((member) => {
+      if (member.startsWith('team:')) {
+        const team = member.replace('team:', '');
+        const token = core.getInput('token');
+        const octokit = github.getOctokit(token);
+        const teamData = octokit.rest.teams.listMembersInOrg({
+          org: github.get_context().repo.owner,
+          team_slug: team,
         });
 
-        core.info(`Obtained data from ${actualMembers.length} users`);
-        core.info("usernames", actualMembers.map(({ username }) => username).join(","));
-        core.info("team-data", JSON.stringify(actualMembers));
+        const teamObj = teamData.data.map((user) => {
+          return {
+            username: user.login,
+            url: user.html_url,
+            avatar: user.avatar_url,
+          };
+        });
 
-        actualMembers.includes(author) ? group_name : undefined
-        members = actualMembers;
-        core.info('------------' + JSON.stringify(actualMembers));
+        if (teamObj.length > 0) {
+          core.info(`Obtained data from ${teamObj.length} users`);
+          core.info('usernames', teamObj.map(({ username }) => username).join(','));
+          // eslint-disable-next-line array-callback-return
+          teamObj.map(function({ username }) {
+            actualMembers.push(username);
+          });
+          core.info('team-data', JSON.stringify(teamObj));
+        } else {
+          core.info(`No users were found when searching for the team ${team}`);
+        }
+      } else {
+        actualMembers.push(member);
       }
+    });
+
+    core.info(`Obtained data from ${actualMembers.length} users`);
+    core.info('usernames', actualMembers.map(({ username }) => username).join(','));
+    core.info('team-data', JSON.stringify(actualMembers));
+
+    actualMembers.includes(author) ? group_name : undefined;
+    core.info('------------' + JSON.stringify(actualMembers));
+    members = actualMembers;
+    return members;
+  }
   ).filter((group_name) => group_name);
 
   core.info('Group assignment feature is enabled 00111');
 
   const other_group_members = belonging_group_names.flatMap((group_name) =>
-      groups[group_name]
+    groups[group_name]
   ).filter((group_member) => group_member !== author);
 
   return [ ...new Set(other_group_members) ];
