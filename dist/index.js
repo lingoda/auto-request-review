@@ -16171,7 +16171,7 @@ if (process.env.NODE_ENV !== 'automated-testing') {
 const core = __nccwpck_require__(2186);
 const minimatch = __nccwpck_require__(3973);
 const sample_size = __nccwpck_require__(2199);
-const github = __nccwpck_require__(8396);
+const github = __nccwpck_require__(5438);
 
 function fetch_other_group_members({ author, config }) {
   const DEFAULT_OPTIONS = {

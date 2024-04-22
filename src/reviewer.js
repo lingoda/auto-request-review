@@ -3,7 +3,7 @@
 const core = require('@actions/core');
 const minimatch = require('minimatch');
 const sample_size = require('lodash/sampleSize');
-const github = require('./github');
+const github = require('@actions/github');
 
 function fetch_other_group_members({ author, config }) {
   const DEFAULT_OPTIONS = {
