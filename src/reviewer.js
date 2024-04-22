@@ -31,12 +31,12 @@ function fetch_other_group_members({ author, config }) {
         const team = member.replace('team:', '');
         const token = core.getInput('token');
         const octokit = github.getOctokit(token);
-        core.info(JSON.stringify(octokit.teams, '', 4));
+        core.info(team);
         const teamData = octokit.teams.listMembersInOrg({
           org: github.context.repo.owner,
           team_slug: team,
         });
-        core.info(JSON.stringify(teamData, '', 4));
+        core.info(teamData);
 
         const teamObj = teamData.data.map((user) => {
           return {
