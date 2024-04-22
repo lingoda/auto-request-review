@@ -16202,7 +16202,7 @@ function fetch_other_group_members({ author, config }) {
         core.info(team);
         const teamData = octokit.teams.listMembersInOrg({
           org: github.context.repo.owner,
-          team_slug: team,
+          team_slug: team.toLowerCase(),
         });
         core.info(teamData);
 
