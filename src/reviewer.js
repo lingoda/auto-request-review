@@ -36,7 +36,7 @@ function fetch_other_group_members({ author, config }) {
           org: github.context.repo.owner,
           team_slug: team.toLowerCase(),
         });
-        core.info(teamData);
+        core.info(JSON.stringify(teamData, '', 4));
 
         const teamObj = teamData.data.map((user) => {
           return {
