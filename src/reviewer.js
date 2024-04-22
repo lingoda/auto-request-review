@@ -27,7 +27,7 @@ function fetch_other_group_members({ author, config }) {
   const belonging_group_names = Object.entries(groups).map(function([ group_name, members ]) {
         const actualMembers = {};
         members.forEach((member) => {
-          if (member.contains('team:')) {
+          if (member.startsWith('team:')) {
             const team = member.replace('team:', '');
             const teamData = github.get_octokit.rest.teams.listMembersInOrg({
               org,
