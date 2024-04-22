@@ -55,6 +55,11 @@ function fetch_other_group_members({ author, config }) {
             actualMembers.push(member);
           }
         });
+
+        info(`Obtained data from ${actualMembers.length} users`);
+        setOutput("usernames", actualMembers.map(({ username }) => username).join(","));
+        setOutput("team-data", JSON.stringify(actualMembers));
+
         actualMembers.includes(author) ? group_name : undefined
       }
   ).filter((group_name) => group_name);
