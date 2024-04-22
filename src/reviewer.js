@@ -20,6 +20,7 @@ function fetch_other_group_members({ author, config }) {
   }
 
   core.info('Group assignment feature is enabled');
+  core.info('Group assignment feature is enabled 00');
 
   const groups = (config.reviewers && config.reviewers.groups) || {};
 
@@ -65,6 +66,8 @@ function fetch_other_group_members({ author, config }) {
         core.info('------------' + JSON.stringify(actualMembers));
       }
   ).filter((group_name) => group_name);
+
+  core.info('Group assignment feature is enabled 00111');
 
   const other_group_members = belonging_group_names.flatMap((group_name) =>
       groups[group_name]
